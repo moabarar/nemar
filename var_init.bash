@@ -28,10 +28,11 @@ ITTER=200
 DISPLAY_FREQ=1
 SAVE_EPOCH_FREQ=50
 TBVIS_GRAD_UPDATE_RATE=100
+DATASET_DIR='/home/moaba/aligning_cyclegan/datasets'
 DATASET_NAME="flash_no_flash" #"EXP_523" #"agrinet_greenhouse" #"EXP_541" #"EXP_523" #"agrinet_extra_large_data"
-MODEL="aligning_stn_combined"
+MODEL="mirnet"
 DIRECTION="AtoB"
-DATASET_MODE="poc"
+DATASET_MODE="agrinet"
 BATCH=1
 NORM="instance"
 NO_DROPOUT="--no_dropout"
@@ -49,7 +50,7 @@ TBVIS_ENABLE="" #"--tbvis_enable"
 if [ $# -eq 0 ]; then
 	echo "Initialzed vars"
 elif [ "$1" == "run" ]; then
-	CUDA_VISIBLE_DEVICES=${CUDA_DEVICE} python train.py --dataroot ./datasets/${DATASET_NAME}/\
+	CUDA_VISIBLE_DEVICES=${CUDA_DEVICE} python train.py --dataroot ${DATASET_DIR}/${DATASET_NAME}/\
 	--dataset_mode ${DATASET_MODE} --name ${OUTPUT_NAME} --model ${MODEL}\
 	--save_epoch_freq ${SAVE_EPOCH_FREQ} --niter ${ITTER} --niter_decay ${ITTER_DECAY} --direction ${DIRECTION}\
 	--display_freq ${DISPLAY_FREQ}  --stn_cfg ${CFG} --netG ${NET_G} --input_nc 3 --output_nc 3 --lambda_rec ${REC_LAMBDA} --lambda_L1 ${L1_LAMBDA}\
@@ -59,7 +60,7 @@ elif [ "$1" == "run" ]; then
         --netD ${NET_D} --n_layers_D ${N_LAYERS_D} ${NO_DROPOUT} --alpha_reg ${ALPHA_REG} --checkpoints_dir ./checkpoints \
 	${G_TRAIN_WITH_L1}  ${G_TRAIN_WITH_GAN}
 elif [ "$1" == "nohup" ]; then
-	CUDA_VISIBLE_DEVICES=${CUDA_DEVICE} nohup python train.py --dataroot ./datasets/${DATASET_NAME}/\
+	CUDA_VISIBLE_DEVICES=${CUDA_DEVICE} nohup python train.py --dataroot ${DATASET_DIR}/${DATASET_NAME}/\
 	--dataset_mode ${DATASET_MODE} --name ${OUTPUT_NAME} --model ${MODEL} \
 	--save_epoch_freq ${SAVE_EPOCH_FREQ} --niter ${ITTER} --niter_decay ${ITTER_DECAY} --direction ${DIRECTION}\
 	--display_freq ${DISPLAY_FREQ}  --stn_cfg ${CFG} --netG ${NET_G} --input_nc 3 --output_nc 1 --lambda_rec ${REC_LAMBDA} --lambda_L1 ${L1_LAMBDA}\
