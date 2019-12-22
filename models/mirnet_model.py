@@ -123,8 +123,8 @@ class MIRNETModel(BaseModel):
         # if opt.direction in ['AtoB', 'Cycle']:
         self.netG_A = networks.define_G(in_c, out_c, opt.ngf, opt.netG, opt.norm,
                                         not opt.no_dropout, opt.init_type, opt.init_gain, self.gpu_ids)
-        callback = None if self.tb_visualizer is None else self.tb_visualizer.save_histogram
-        self.netSTN_A = STN(in_c, out_c, cfg=opt.stn_cfg, callback=callback)
+        self.netSTN_A = STN(in_channels_a=in_c, in_channels_b=out_c, height=opt.img_height, width=opt.img_width,
+                            batch_size=opt.batch_size, cfg=opt.stn_cfg)
         if len(self.gpu_ids) > 0:
             assert (torch.cuda.is_available())
             self.netSTN_A.to(self.gpu_ids[0])
