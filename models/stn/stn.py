@@ -8,7 +8,7 @@ from .unet_config import UNETConfig
 
 
 class STN(nn.Module):
-    def __init__(self, in_channels_a=3, in_channels_b=1, height=288, width=384, batch_size=1, cfg='A', callback=None):
+    def __init__(self, in_channels_a, in_channels_b, height, width, batch_size, cfg='A'):
         super(STN, self).__init__()
         self.cnt = 0
         self.batch_size = batch_size

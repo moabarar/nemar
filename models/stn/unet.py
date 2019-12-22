@@ -36,7 +36,8 @@ class UnetSTN(nn.Module):
         skip_connect.insert(0, None)
         self.transform_block = DownBlock(prev_input_nf, prev_input_nf, kernel_size=ksize, stride=1, padding=padding,
                                          bias=use_bias, activation=down_activation, init_func=init_function,
-                                         use_resnet=use_resnet, use_norm=use_norm, pool=False, refine=refine, )
+                                         use_resnet=use_resnet, use_norm=use_norm, pool=False, refine=refine,
+                                         skip=False)
         connection_map = {}
         for i, nf in enumerate(cfg.up_nf):
             setattr(self, 'up_{}'.format(i + 1),
