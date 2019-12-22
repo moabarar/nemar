@@ -21,6 +21,12 @@ refine = {'A': False,
           'D': False,
           'E': False}
 
+refine_input = {'A': False,
+                'B': False,
+                'C': False,
+                'D': False,
+                'E': False}
+
 use_residual_block = {'A': False,
                       'B': False,
                       'C': False,
@@ -43,6 +49,7 @@ class UNETConfig:
         self.output_refine_nf = output_refine_nf[cfg]
         self.output_refine_activation = 'leaky_relu'
         self.refine = refine[cfg]
+        self.refine_input = refine_input[cfg]
         self.init_type = init_type[cfg]
         self.use_norm = False
         self.use_bias = True

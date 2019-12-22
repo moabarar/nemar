@@ -3,7 +3,7 @@ import itertools
 import torch
 
 from util.image_pool import ImagePool
-from util.losses import identity_loss, EdgeLoss
+from util.losses import smoothness_loss
 from util.tb_visualizer import TensorboardVisualizer
 from . import networks
 from .base_model import BaseModel
@@ -224,9 +224,9 @@ class MIRNETModel(BaseModel):
         self.loss_GAN_P = self.opt.lambda_G * self.criterionGAN(pred_fake, True)
 
         # STN Smoothness:
-        self.loss_smoothness = self.opt.lambda_stn_reg * identity_loss(self.offset_real_A,
-                                                                       img=self.transformed_real_A.detach(),
-                                                                       alpha=self.opt.alpha_reg, beta=1.0)
+        self.loss_smoothness = self.opt.lambda_stn_reg * smoothness_loss(self.offset_real_A,
+                                                                         img=self.transformed_real_A.detach(),
+                                                                         alpha=self.opt.alpha_reg)
 
         self.loss_L1_C = self.opt.lambda_L2 * self.criterionL2(self.fake_B_P, self.real_B)
         loss = self.loss_L1_B + self.loss_L1_P + self.loss_GAN_B + self.loss_GAN_P + self.loss_smoothness + self.loss_L1_C
