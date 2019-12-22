@@ -2,7 +2,6 @@ import itertools
 
 import torch
 
-from util.image_pool import ImagePool
 from util.losses import smoothness_loss
 from util.tb_visualizer import TensorboardVisualizer
 from . import networks
@@ -50,9 +49,7 @@ class MIRNETModel(BaseModel):
         if is_train:
             parser.add_argument('--lambda_G', type=float, default=1.0, help='weight for loss (A -> B)')
             parser.set_defaults(pool_size=0, gan_mode='vanilla')
-            parser.add_argument('--lambda_rec', type=float, default=100.0, help='weight for L1 loss')
             parser.add_argument('--lambda_L1', type=float, default=100.0, help='weight for L1 loss')
-            parser.add_argument('--lambda_L2', type=float, default=0.0, help='weight for L2 loss')
             parser.add_argument('--alpha_reg', type=float, default=0.0, help='Biliteral alpha')
             parser.add_argument('--stn_lr', type=float, default=0.0,
                                 help='Learning rate used for optimizing the stn model.')
@@ -92,20 +89,13 @@ class MIRNETModel(BaseModel):
             print('Enabling Tensorboard Visualizer!')
             self.tb_visualizer.enable()
         if self.isTrain:
-            # create image buffer to store previously generated images
-            self.fake_B_pool = ImagePool(opt.pool_size)
-            self.fake_A_pool = ImagePool(opt.pool_size)
             # define loss functions
             self.criterionGAN = networks.GANLoss(opt.gan_mode).to(self.device)  # define GAN loss.
             self.criterionL1 = torch.nn.L1Loss()
-            self.criterionRec = torch.nn.L1Loss()
-            self.criterionCycle = torch.nn.MSELoss()
-            self.criterionL2 = torch.nn.MSELoss()
-            self.edgeLoss = EdgeLoss(opt.input_nc, opt.output_nc)
             self.setup_optimizers()
 
     def setup_visualizers(self):
-        loss_names_A = ['L1_B', 'GAN_B', 'L1_P', 'GAN_P', 'smoothness', 'D_fake_P', 'D_fake_B', 'D', 'L1_C']
+        loss_names_A = ['L1_B', 'GAN_B', 'L1_P', 'GAN_P', 'smoothness', 'D_fake_P', 'D_fake_B', 'D']
 
         # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
         visual_names_A = ['fake_B_B', 'fake_B_P', 'transformed_real_A', 'fake_B']
@@ -228,8 +218,7 @@ class MIRNETModel(BaseModel):
                                                                          img=self.transformed_real_A.detach(),
                                                                          alpha=self.opt.alpha_reg)
 
-        self.loss_L1_C = self.opt.lambda_L2 * self.criterionL2(self.fake_B_P, self.real_B)
-        loss = self.loss_L1_B + self.loss_L1_P + self.loss_GAN_B + self.loss_GAN_P + self.loss_smoothness + self.loss_L1_C
+        loss = self.loss_L1_B + self.loss_L1_P + self.loss_GAN_B + self.loss_GAN_P + self.loss_smoothness
         loss.backward()
 
         return loss
