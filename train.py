@@ -24,7 +24,6 @@ from data import create_dataset
 from models import create_model
 from options.train_options import TrainOptions
 from util.visualizer import Visualizer
-from visualize_offset import calculate_mean_distances_on_epoch, read_reference_points
 
 if __name__ == '__main__':
     print('Reading Refernce Points:')
@@ -80,16 +79,6 @@ if __name__ == '__main__':
             print('saving the model at the end of epoch %d, iters %d' % (epoch, total_iters))
             model.save_networks('latest')
             model.save_networks(epoch)
-            # mean_before, mean_after = calculate_mean_distances_on_epoch(epoch, reference_points, model.save_dir, opt.direction,config=opt.stn_cfg)
-            # visualizer.print_current_losses(epoch, epoch_iter, {'mean_before': mean_before, 'mean_after': mean_after}, 0.0, 0.0)
 
         print('End of epoch %d / %d \t Time Taken: %d sec' % (
             epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time))
-
-        # model.update_learning_rate()  # update learning rates at the end of every epoch.
-        # for sch in stn_schedulres:
-        #     sch.step()
-
-    # if model.tb_visualizer is not None:
-    #     model.tb_visualizer.epoch_step()
-    #     model.tb_visualizer.end()
