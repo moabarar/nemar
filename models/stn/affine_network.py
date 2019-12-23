@@ -11,15 +11,15 @@ class AffineNetwork(nn.Module):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         ngf = 32
         # 288 x 384
-        self.down1 = DownBlock(4, ngf, 3, 1, 1, True, 'leaky_rely', 'kaiming', False, True, False, True, True)
+        self.down1 = DownBlock(4, ngf, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True)
         # 144 x 192
-        self.down2 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_rely', 'kaiming', False, True, False, True, True)
+        self.down2 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True)
         # 72 x 96
         ngf *= 2
-        self.down3 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_rely', 'kaiming', False, True, False, True, True)
+        self.down3 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True)
         # 36 x 48
-        self.down4 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_rely', 'kaiming', False, True, False, True, False)
-        self.down5 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_rely', 'kaiming', False, True, False, True, False)
+        self.down4 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, False)
+        self.down5 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, False)
         self.convs = nn.Sequential(self.down1,
                                    self.down2,
                                    self.down3,
