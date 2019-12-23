@@ -15,11 +15,11 @@ class AffineNetwork(nn.Module):
             DownBlock(64, 128, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
             DownBlock(128, 256, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
         )
-        self.local = nn.Sequential(nn.Linear(256 * 9 * 12, 128, True),
+        self.local = nn.Sequential(nn.Linear(256 * 9 * 12, 32, True),
                                    nn.LeakyReLU(negative_slope=0.2),
-                                   nn.Linear(128, 128, True),
+                                   nn.Linear(32, 32, True),
                                    nn.LeakyReLU(negative_slope=0.2),
-                                   nn.Linear(128, 6, True))
+                                   nn.Linear(32, 6, True))
 
         self.local[-1].weight.data.zero_()
         self.local[-1].bias.data.zero_()
@@ -31,4 +31,5 @@ class AffineNetwork(nn.Module):
         dtheta = self.local(x)
         theta = dtheta + self.identity_theta
         theta = theta.view(-1, 2, 3)
+        print(theta.size())
         return theta, dtheta
