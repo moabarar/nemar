@@ -37,8 +37,8 @@ class STN(nn.Module):
         return identity
 
     def apply_offset(self, img, offset):
-        b_size = img.size(0)
-        grid = (self.identity_grid.repeat(b_size, 1, 1, 1) + offset).permute([0, 2, 3, 1])
+        # b_size = img.size(0)
+        grid = offset  # (self.identity_grid.repeat(b_size, 1, 1, 1) + offset).permute([0, 2, 3, 1])
         ret = F.grid_sample(img, grid)
         return ret
 
@@ -52,7 +52,7 @@ class STN(nn.Module):
         img_a_t = self.apply_offset(img_a, affine_offset)
         img_conc = torch.cat((img_a_t, img_b), 1)
         deformable_offset = self.offset_map(img_conc)
-        offset = deformable_offset + affine_offset
+        offset = deformable_offset.permute([0, 2, 3, 1]) + affine_offset
         if apply_on is None:
             x = self.apply_offset(img_a, offset)
         else:
