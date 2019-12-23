@@ -1,5 +1,5 @@
 #!/bin/bash          
-CFG="A"
+CFG="B"
 CUDA_DEVICE=0
 #-------> LRS
 LR=0.0001
@@ -52,7 +52,7 @@ elif [ "$1" == "run" ]; then
 	CUDA_VISIBLE_DEVICES=${CUDA_DEVICE} python train.py --dataroot ${DATASET_DIR}/${DATASET_NAME}/\
 	--dataset_mode ${DATASET_MODE} --name ${OUTPUT_NAME} --model ${MODEL}\
 	--save_epoch_freq ${SAVE_EPOCH_FREQ} --niter ${ITTER} --niter_decay ${ITTER_DECAY} --direction ${DIRECTION}\
-	--display_freq ${DISPLAY_FREQ}  --stn_cfg ${CFG} --netG ${NET_G} --input_nc 3 --output_nc 3 --lambda_L1 ${L1_LAMBDA}\
+	--display_freq ${DISPLAY_FREQ}  --stn_cfg ${CFG} --netG ${NET_G} --input_nc 3 --output_nc 1 --lambda_L1 ${L1_LAMBDA}\
 	--stn_lr ${STN_LR} --stn_lr_high ${STN_LR_HIGH} --lr ${LR} --lambda_stn_reg\
 	${SMOOTH_LAMBDA} ${TBVIS_ENABLE} --tbvis_grads_update_rate ${TBVIS_GRAD_UPDATE_RATE} --ngf ${NGF}\
 	--batch ${BATCH} --norm ${NORM} --init_type ${INIT_TYPE} ${TRAIN_WITH_GAN} ${TRAIN_WITH_L1} ${TRAIN_WITH_EDGE} ${CONDITION_ON_STN} --ndf ${NDF} \
