@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 from torch import nn
 
 from .layers import DownBlock
@@ -15,7 +14,7 @@ class AffineNetwork(nn.Module):
             DownBlock(32, 64, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
             DownBlock(64, 128, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
             DownBlock(128, 256, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
-            )
+        )
         self.local = nn.Sequential(nn.Linear(256 * 9 * 12, 128, True),
                                    nn.LeakyReLU(negative_slope=0.2),
                                    nn.Linear(128, 128, True),
@@ -31,5 +30,5 @@ class AffineNetwork(nn.Module):
         x = x.view(-1, 256 * 9 * 12)
         dtheta = self.local(x)
         theta = dtheta + self.identity_theta
-        grid = F.affine_grid(theta, x.size())
-        return grid, dtheta
+        theta = theta.view(-1, 2, 3)
+        return theta, dtheta
