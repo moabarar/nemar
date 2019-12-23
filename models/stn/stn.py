@@ -47,7 +47,8 @@ class STN(nn.Module):
             self.identity_grid = self.identity_grid.to(img_a.device)
         # Perform Affine Transformation
         img_conc = torch.cat((img_a, img_b), 1)
-        affine_offset, dtheta = self.affine_map(img_conc)
+        theta, dtheta = self.affine_map(img_conc)
+        affine_offset = F.affine_grid(theta, (self.oh, self.ow))
         img_a_t = self.apply_offset(img_a, affine_offset)
         img_conc = torch.cat((img_a_t, img_b), 1)
         deformable_offset = self.offset_map(img_conc)
