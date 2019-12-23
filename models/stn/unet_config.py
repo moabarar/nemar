@@ -1,22 +1,22 @@
 down_nf = {'A': [64, 128, 128, 128, 128, 128, 128],
-           'B': [64, 128, 128, 128, 128, 128, 128],
+           'B': [32, 64, 128, 128],
            'C': [64, 64, 128, 128, 128, 128, 128],
            'D': [32, 32, 64, 64, 64, 64, 64],
            'E': [32, 64, 64, 64, 64, 64, 64]}
 
 up_nf = {'A': [128, 128, 128, 128, 128, 128, 64],
-         'B': [128, 128, 128, 128, 128, 128, 64],
+         'B': [128, 128, 128, 64, 32],
          'C': [128, 128, 128, 128, 128, 64, 64],
          'D': [64, 64, 64, 64, 64, 32, 32],
          'E': [64, 64, 64, 64, 64, 64, 32]}
 
 output_refine_nf = {'A': [64, 64],
-                    'B': [64, 32],
+                    'B': [32, 32],
                     'C': [64, 64],
                     'D': [32, 32],
                     'E': [32, 32]}
 refine = {'A': False,
-          'B': False,
+          'B': True,
           'C': False,
           'D': False,
           'E': False}
@@ -28,7 +28,7 @@ refine_input = {'A': False,
                 'E': False}
 
 use_residual_block = {'A': False,
-                      'B': False,
+                      'B': True,
                       'C': False,
                       'D': False,
                       'E': False}
@@ -53,4 +53,5 @@ class UNETConfig:
         self.init_type = init_type[cfg]
         self.use_norm = False
         self.use_bias = True
+        self.use_resnet = use_residual_block[cfg]
         self.refine_input = refine_input[cfg]

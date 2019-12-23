@@ -22,7 +22,7 @@ class UnetSTN(nn.Module):
         use_norm = cfg.use_norm
         use_bias = cfg.use_bias
         skip_connect = []
-        use_resnet = True
+        use_resnet = cfg.use_resnet
         ksize = 3
         padding = (ksize - 1) // 2
         for i, nf in enumerate(cfg.down_nf):
@@ -42,7 +42,8 @@ class UnetSTN(nn.Module):
         for i, nf in enumerate(cfg.up_nf):
             setattr(self, 'up_{}'.format(i + 1),
                     UpBlock(prev_input_nf, nf, kernel_size=3, stride=1, padding=1, bias=use_bias,
-                            activation=up_activation, init_func=init_function, use_norm=use_norm, refine=refine))
+                            activation=up_activation, init_func=init_function, use_norm=use_norm, refine=refine,
+                            use_resnet=use_resnet))
             if i < len(skip_connect) and skip_connect[i] != None:
                 connection_map['up_{}'.format(i + 1)] = skip_connect[i]
             if i + 1 < len(skip_connect) and skip_connect[i + 1] != None:
@@ -55,7 +56,7 @@ class UnetSTN(nn.Module):
             setattr(self, 'output_refine_{}'.format(i + 1),
                     Conv(prev_input_nf, nf, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,
                          activation=output_refine_activation, init_func=init_function, use_norm=use_norm,
-                         pool=False, skip=False))
+                         pool=False, skip=False, use_resnet=use_resnet))
             if i == 0 and len(connection_map.keys()) < len(skip_connect) - 1:
                 connection_map['output_refine_{}'.format(i + 1)] = skip_connect[-1]
             prev_input_nf = nf if isinstance(nf, int) else prev_input_nf
