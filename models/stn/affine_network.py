@@ -24,7 +24,7 @@ class AffineNetwork(nn.Module):
 
         self.local[-1].weight.data.zero_()
         self.local[-1].bias.data.zero_()
-        self.identity_theta = torch.tensor([1, 0, 0, 0, 1, 0], dtype=torch.float)
+        self.identity_theta = torch.tensor([1, 0, 0, 0, 1, 0], dtype=torch.float).to(self.device)
 
     def forward(self, x):
         x = self.convs(x)
