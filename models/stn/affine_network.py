@@ -9,23 +9,14 @@ class AffineNetwork(nn.Module):
     def __init__(self):
         super(AffineNetwork, self).__init__()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        ngf = 32
-        # 288 x 384
-        self.down1 = DownBlock(4, ngf, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True)
-        # 144 x 192
-        self.down2 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True)
-        # 72 x 96
-        ngf *= 2
-        self.down3 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True)
-        # 36 x 48
-        self.down4 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, False)
-        self.down5 = DownBlock(ngf, 2 * ngf, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, False)
-        self.convs = nn.Sequential(self.down1,
-                                   self.down2,
-                                   self.down3,
-                                   self.down4,
-                                   self.down5)
-        self.local = nn.Sequential(nn.Linear(ngf * 36 * 84, 128, True),
+        self.convs = nn.Sequential(
+            DownBlock(4, 16, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
+            DownBlock(16, 32, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
+            DownBlock(32, 64, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
+            DownBlock(64, 128, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
+            DownBlock(128, 256, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
+            )
+        self.local = nn.Sequential(nn.Linear(256 * 9 * 12, 128, True),
                                    nn.LeakyReLU(negative_slope=0.2),
                                    nn.Linear(128, 128, True),
                                    nn.LeakyReLU(negative_slope=0.2),
@@ -37,7 +28,7 @@ class AffineNetwork(nn.Module):
 
     def forward(self, x):
         x = self.convs(x)
-        x = x.view(-1, 128 * 36 * 84)
+        x = x.view(-1, 256 * 9 * 12)
         dtheta = self.local(x)
         theta = dtheta + self.identity_theta
         grid = F.affine_grid(theta, x.size())
