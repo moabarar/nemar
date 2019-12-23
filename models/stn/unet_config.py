@@ -16,7 +16,7 @@ output_refine_nf = {'A': [64, 64],
                     'D': [32, 32],
                     'E': [32, 32]}
 refine = {'A': False,
-          'B': True,
+          'B': False,
           'C': False,
           'D': False,
           'E': False}

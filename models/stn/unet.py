@@ -43,7 +43,7 @@ class UnetSTN(nn.Module):
             setattr(self, 'up_{}'.format(i + 1),
                     UpBlock(prev_input_nf, nf, kernel_size=3, stride=1, padding=1, bias=use_bias,
                             activation=up_activation, init_func=init_function, use_norm=use_norm, refine=refine,
-                            use_resnet=use_resnet))
+                            use_resnet=False))
             if i < len(skip_connect) and skip_connect[i] != None:
                 connection_map['up_{}'.format(i + 1)] = skip_connect[i]
             if i + 1 < len(skip_connect) and skip_connect[i + 1] != None:
@@ -51,7 +51,7 @@ class UnetSTN(nn.Module):
             else:
                 prev_input_nf = nf
         for i, nf in enumerate(cfg.output_refine_nf):
-            kernel_size = 1 if i == len(cfg.output_refine_nf) - 1 else 3
+            kernel_size = 3 # 1 if i == len(cfg.output_refine_nf) - 1 else 3
             padding = (kernel_size - 1) // 2
             setattr(self, 'output_refine_{}'.format(i + 1),
                     Conv(prev_input_nf, nf, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,

@@ -10,7 +10,7 @@ scale_eval = False
 alpha = 0.02
 beta = 0.00002
 
-resnet_n_blocks = 1
+resnet_n_blocks = 3
 
 
 def custom_init(m):
@@ -36,8 +36,7 @@ def get_init_function(activation, init_function, **kwargs):
         elif init_function is 'orthogonal':
             return partial(torch.nn.init.orthogonal_, gain=gain)
         elif init_function is 'zeros':
-            return partial(torch.nn.init.normal_, mean=0.0,
-                           std=1e-4)  # partial(torch.nn.init.uniform_, a=-2e-2, b=2e-2)#  # torch.nn.init.zeros_
+            return partial(torch.nn.init.normal_, mean=0.0, std=1e-5)  # partial(torch.nn.init.uniform_, a=-2e-2, b=2e-2)#  # torch.nn.init.zeros_
     elif init_function is None:
         if activation in ['relu', 'leaky_relu']:
             return partial(torch.nn.init.kaiming_normal_, a=a, nonlinearity=activation)
@@ -82,6 +81,8 @@ class Conv(torch.nn.Module):
             nn.init.constant_(self.norm.bias.data, 0.0)
 
     def forward(self, x):
+        # if self.resnet_block is not None:
+        #     x = self.resnet_block(x)
         x = self.conv2d(x)
         if self.norm is not None:
             x = self.norm(x)
