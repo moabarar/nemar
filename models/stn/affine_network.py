@@ -27,9 +27,8 @@ class AffineNetwork(nn.Module):
 
     def forward(self, x):
         x = self.convs(x)
-        x = x.view(-1, 256 * 9 * 12)
+        x = x.view(-1, 32 * 9 * 12)
         dtheta = self.local(x)
         theta = dtheta + self.identity_theta
         theta = theta.view(-1, 2, 3)
-        print(theta.size())
         return theta, dtheta
