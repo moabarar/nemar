@@ -52,14 +52,14 @@ class STN(nn.Module):
         if self.apply_affine_first:
             theta, dtheta = self.affine_map(img_conc)
             initial_grid = F.affine_grid(theta, img_a.size())
-            img_a_t = self.apply_offset(img_a, initial_grid)
+            img_a_t = self.apply_grid(img_a, initial_grid)
             img_conc = torch.cat((img_a_t, img_b), 1)
         deformation_field = self.offset_map(img_conc)
         resampling_grid = deformation_field.permute([0, 2, 3, 1]) + initial_grid
         if apply_on is None:
-            x = self.apply_offset(img_a, resampling_grid)
+            x = self.apply_grid(img_a, resampling_grid)
         else:
-            x = self.apply_offset(apply_on, resampling_grid)
+            x = self.apply_grid(apply_on, resampling_grid)
         return x, resampling_grid, deformation_field, dtheta
 
     def init_to_identity(self):
