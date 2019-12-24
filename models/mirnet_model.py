@@ -215,7 +215,8 @@ class MIRNETModel(BaseModel):
                                                                          alpha=self.opt.alpha_reg)
         self.loss_affine_reg = 1.0 * l2_norm(self.affine_theta)
 
-        loss = self.loss_L1_B + self.loss_L1_P + self.loss_GAN_B + self.loss_GAN_P + self.loss_smoothness + self.affine_theta
+        loss = self.loss_L1_B + self.loss_L1_P + self.loss_GAN_B + self.loss_GAN_P + \
+               self.loss_smoothness + self.loss_affine_reg
         loss.backward()
 
         return loss
