@@ -11,11 +11,11 @@ class AffineNetwork(nn.Module):
         self.convs = nn.Sequential(
             DownBlock(4, 16, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
             DownBlock(16, 32, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
-            DownBlock(32, 64, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
-            DownBlock(64, 128, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
-            DownBlock(128, 256, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
+            DownBlock(32, 32, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
+            DownBlock(32, 32, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
+            DownBlock(32, 32, 3, 1, 1, True, 'leaky_relu', 'kaiming', False, True, False, True, True),
         )
-        self.local = nn.Sequential(nn.Linear(256 * 9 * 12, 32, True),
+        self.local = nn.Sequential(nn.Linear(32 * 9 * 12, 32, True),
                                    nn.LeakyReLU(negative_slope=0.2),
                                    nn.Linear(32, 32, True),
                                    nn.LeakyReLU(negative_slope=0.2),

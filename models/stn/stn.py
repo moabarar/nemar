@@ -9,7 +9,7 @@ from .unet_config import UNETConfig
 
 
 class STN(nn.Module):
-    def __init__(self, in_channels_a, in_channels_b, height, width, batch_size, cfg='A'):
+    def __init__(self, in_channels_a, in_channels_b, height, width, batch_size, cfg='A', apply_affine_first=True):
         super(STN, self).__init__()
         self.cnt = 0
         self.batch_size = batch_size
@@ -20,6 +20,7 @@ class STN(nn.Module):
         self.offset_map = UnetSTN(self.in_channels_a + self.in_channels_b, cfg=UNETConfig(cfg=cfg)).to(self.device)
         self.affine_map = AffineNetwork().to(self.device)
         self.identity_grid = self.get_identity_grid()
+        self.apply_affine_first = apply_affine_first
 
     def get_scale(self):
         scale_x = np.ones((self.batch_size, self.oh, self.ow)).astype(np.float32) * (256.0 / float(self.ow))
@@ -34,11 +35,10 @@ class STN(nn.Module):
         xx = xx.unsqueeze(dim=0)
         yy = yy.unsqueeze(dim=0)
         identity = torch.cat((yy, xx), dim=0).unsqueeze(0)
+        identity = identity.permute([0, 2, 3, 1])
         return identity
 
-    def apply_offset(self, img, offset):
-        # b_size = img.size(0)
-        grid = offset  # (self.identity_grid.repeat(b_size, 1, 1, 1) + offset).permute([0, 2, 3, 1])
+    def apply_grid(self, img, grid):
         ret = F.grid_sample(img, grid)
         return ret
 
@@ -47,17 +47,20 @@ class STN(nn.Module):
             self.identity_grid = self.identity_grid.to(img_a.device)
         # Perform Affine Transformation
         img_conc = torch.cat((img_a, img_b), 1)
-        theta, dtheta = self.affine_map(img_conc)
-        affine_offset = F.affine_grid(theta, img_a.size())
-        img_a_t = self.apply_offset(img_a, affine_offset)
-        img_conc = torch.cat((img_a_t, img_b), 1)
-        deformable_offset = self.offset_map(img_conc)
-        offset = deformable_offset.permute([0, 2, 3, 1]) + affine_offset
+        theta, dtheta = None, None
+        initial_grid = self.identity_grid
+        if self.apply_affine_first:
+            theta, dtheta = self.affine_map(img_conc)
+            initial_grid = F.affine_grid(theta, img_a.size())
+            img_a_t = self.apply_offset(img_a, initial_grid)
+            img_conc = torch.cat((img_a_t, img_b), 1)
+        deformation_field = self.offset_map(img_conc)
+        resampling_grid = deformation_field.permute([0, 2, 3, 1]) + initial_grid
         if apply_on is None:
-            x = self.apply_offset(img_a, offset)
+            x = self.apply_offset(img_a, resampling_grid)
         else:
-            x = self.apply_offset(apply_on, offset)
-        return x, offset
+            x = self.apply_offset(apply_on, resampling_grid)
+        return x, resampling_grid, deformation_field, dtheta
 
     def init_to_identity(self):
         self.offset_map.init_to_identity()

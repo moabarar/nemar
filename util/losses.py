@@ -31,3 +31,11 @@ def smoothness_loss(deformation, img=None, alpha=0.0):
     loss = my_mean(weight_1 * diff_1) + my_mean(weight_2 * diff_2) + my_mean(weight_3 * diff_3) + my_mean(
         weight_4 * diff_4)
     return loss
+
+
+def l1_norm(x):
+    return torch.sum(torch.abs(x))
+
+
+def l2_norm(x):
+    return torch.sum(x ** 2)

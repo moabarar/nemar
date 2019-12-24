@@ -2,7 +2,7 @@ import itertools
 
 import torch
 
-from util.losses import smoothness_loss
+from util.losses import smoothness_loss, l2_norm
 from util.tb_visualizer import TensorboardVisualizer
 from . import networks
 from .base_model import BaseModel
@@ -183,17 +183,13 @@ class MIRNETModel(BaseModel):
         # A -> B
         # if self.opt.direction in ['AtoB', 'Cycle']:
         # Before
-        self.transformed_real_A, self.offset_real_A = self.netSTN_A(self.real_A, self.real_B)
+        self.transformed_real_A, self.transformation_grid, self.deformation_field, self.affine_theta = self.netSTN_A(
+            self.real_A, self.real_B)
         self.fake_B_B = self.netG_A(self.transformed_real_A)
 
         # Parallel
         self.fake_B = self.netG_A(self.real_A)
-        self.fake_B_P = self.netSTN_A.module.apply_offset(self.fake_B, self.offset_real_A)
-
-        # B -> A
-        # if self.opt.direction in ['BtoA', 'Cycle']:
-        #     self.transformed_B, self.offset_B = self.netSTN_B(self.real_B, self.real_A)
-        #     self.fake_A_t = self.netG_B(self.transformed_B)
+        self.fake_B_P = self.netSTN_A.module.apply_grid(self.fake_B, self.transformation_grid)
 
     def backward_G_A(self):
         """Calculate GAN and L1 loss for the generator"""
@@ -213,12 +209,13 @@ class MIRNETModel(BaseModel):
         pred_fake = self.netD_A(fake_AB_t)
         self.loss_GAN_P = self.opt.lambda_G * self.criterionGAN(pred_fake, True)
 
-        # STN Smoothness:
-        self.loss_smoothness = self.opt.lambda_stn_reg * smoothness_loss(self.offset_real_A,
+        # STN Regularization:
+        self.loss_smoothness = self.opt.lambda_stn_reg * smoothness_loss(self.deformation_field,
                                                                          img=self.transformed_real_A.detach(),
                                                                          alpha=self.opt.alpha_reg)
+        self.loss_affine_reg = 1.0 * l2_norm(self.affine_theta)
 
-        loss = self.loss_L1_B + self.loss_L1_P + self.loss_GAN_B + self.loss_GAN_P + self.loss_smoothness
+        loss = self.loss_L1_B + self.loss_L1_P + self.loss_GAN_B + self.loss_GAN_P + self.loss_smoothness + self.affine_theta
         loss.backward()
 
         return loss
