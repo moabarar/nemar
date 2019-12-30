@@ -35,7 +35,7 @@ class UnetSTN(nn.Module):
             skip_connect.insert(0, 'down_{}'.format(i + 1))
         skip_connect.insert(0, None)
         self.transform_block = DownBlock(prev_input_nf, prev_input_nf, kernel_size=ksize, stride=1, padding=padding,
-                                         bias=use_bias, activation=down_activation, init_func=init_function,
+                                         bias=use_bias, activation=up_activation, init_func=init_function,
                                          use_resnet=use_resnet, use_norm=use_norm, pool=False, refine=refine,
                                          skip=False)
         connection_map = {}
@@ -51,17 +51,19 @@ class UnetSTN(nn.Module):
             else:
                 prev_input_nf = nf
         for i, nf in enumerate(cfg.output_refine_nf):
-            kernel_size = 3 # 1 if i == len(cfg.output_refine_nf) - 1 else 3
+            kernel_size = 1 if i == len(cfg.output_refine_nf) - 1 else 3
             padding = (kernel_size - 1) // 2
+            act = up_activation if i==0 else output_refine_activation
+            init = init_function # if i==0 else 'zeros'
             setattr(self, 'output_refine_{}'.format(i + 1),
                     Conv(prev_input_nf, nf, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,
-                         activation=output_refine_activation, init_func=init_function, use_norm=use_norm,
+                         activation=act, init_func=init, use_norm=use_norm,
                          pool=False, skip=False, use_resnet=use_resnet))
             if i == 0 and len(connection_map.keys()) < len(skip_connect) - 1:
                 connection_map['output_refine_{}'.format(i + 1)] = skip_connect[-1]
             prev_input_nf = nf if isinstance(nf, int) else prev_input_nf
         self.output = Conv(prev_input_nf, 2, kernel_size=3, stride=1, padding=1,
-                           bias=True, activation=None, init_func='zeros', use_norm=False, pool=False)
+                           bias=False, activation=None, init_func='zeros', use_norm=False, pool=False)
         self.connection_map = connection_map
         self.skip_connect = skip_connect
 

@@ -1,0 +1,75 @@
+----------------- Options ---------------
+                alpha_reg: 0.0                           
+               batch_size: 10                            	[default: 1]
+                    beta1: 0.5                           
+          checkpoints_dir: ./checkpoints                 
+           continue_train: False                         
+                crop_size: 256                           
+                 dataroot: /home/moaba/aligning_cyclegan/datasets/EXP_523/	[default: None]
+             dataset_mode: agrinet                       	[default: unaligned]
+                direction: AtoB                          
+              display_env: main                          
+             display_freq: 200                           	[default: 400]
+               display_id: -1                            
+            display_ncols: 4                             
+             display_port: 8097                          
+           display_server: http://localhost              
+          display_winsize: 256                           
+                    epoch: latest                        
+              epoch_count: 1                             
+                 gan_mode: vanilla                       
+                  gpu_ids: 0                             
+               img_height: 288                           
+                img_width: 384                           
+                init_gain: 0.02                          
+                init_type: kaiming                       	[default: normal]
+                 input_nc: 3                             
+                  isTrain: True                          	[default: None]
+                 lambda_G: 1.0                           
+                lambda_L1: 10.0                          	[default: 100.0]
+         lambda_edge_loss: 0.0                           
+           lambda_stn_reg: 50.0                          	[default: 0.0]
+                load_iter: 0                             	[default: 0]
+                load_size: 286                           
+                       lr: 0.0001                        	[default: 0.0002]
+           lr_decay_iters: 50                            
+                lr_policy: linear                        
+         max_dataset_size: inf                           
+                    model: mirnet                        	[default: cycle_gan]
+               n_layers_D: 3                             
+                     name: EXP_523_CFG_B_LR_0.0001_STNLR_0.0001_EDGE_0.0REC_0.0_L1_10.0_L2_0.0_GAN_1.0_SMOOTH_50.0_CYCLE_0.0_AtoB_RESNET_3_FLTRS_32_COMBINED_ALPHA_0.0_BATCH_10	[default: experiment_name]
+                      ndf: 32                            	[default: 64]
+                     netD: basic                         
+                     netG: resnet_3blocks                	[default: resnet_9blocks]
+                      ngf: 32                            	[default: 64]
+                    niter: 50                            	[default: 100]
+              niter_decay: 0                             	[default: 100]
+               no_dropout: True                          
+                  no_flip: False                         
+                  no_html: False                         
+                     norm: instance                      
+              num_threads: 4                             
+                output_nc: 1                             	[default: 3]
+                    phase: train                         
+                pool_size: 0                             
+               preprocess: resize_and_crop               
+               print_freq: 100                           
+             save_by_iter: False                         
+          save_epoch_freq: 5                             
+         save_latest_freq: 5000                          
+           serial_batches: False                         
+  smoothness_decay_policy: linear                        
+                  stn_cfg: B                             	[default: A]
+stn_condition_on_discriminator: False                         
+                   stn_lr: 0.0001                        	[default: 0.0]
+              stn_lr_high: 0.0001                        	[default: 0.0]
+      stn_train_with_edge: False                         
+       stn_train_with_gan: True                          	[default: False]
+        stn_train_with_l1: True                          	[default: False]
+                   suffix:                               
+             tbvis_enable: False                         
+  tbvis_grads_update_rate: 100                           
+tbvis_iteration_update_rate: -1                            
+         update_html_freq: 1000                          
+                  verbose: False                         
+----------------- End -------------------

@@ -10,7 +10,7 @@ scale_eval = False
 alpha = 0.02
 beta = 0.00002
 
-resnet_n_blocks = 3
+resnet_n_blocks = 1
 
 
 def custom_init(m):
@@ -36,7 +36,7 @@ def get_init_function(activation, init_function, **kwargs):
         elif init_function is 'orthogonal':
             return partial(torch.nn.init.orthogonal_, gain=gain)
         elif init_function is 'zeros':
-            return partial(torch.nn.init.normal_, mean=0.0, std=1e-5)  # partial(torch.nn.init.uniform_, a=-2e-2, b=2e-2)#  # torch.nn.init.zeros_
+            return partial(torch.nn.init.normal_, mean=0.0, std=1e-3)  # partial(torch.nn.init.uniform_, a=-2e-2, b=2e-2)#  # torch.nn.init.zeros_
     elif init_function is None:
         if activation in ['relu', 'leaky_relu']:
             return partial(torch.nn.init.kaiming_normal_, a=a, nonlinearity=activation)
@@ -98,7 +98,7 @@ class UpBlock(torch.nn.Module):
                  init_func=None, use_norm=False, refine=True, upsample=True, use_resnet=False, **kwargs):
         super(UpBlock, self).__init__()
         alpha = int(in_channels // out_channels)
-        intermediate_nfeats = 2 * in_channels // alpha
+        intermediate_nfeats = out_channels# 2 * in_channels // alpha
         self.conv_0 = Conv(in_channels, intermediate_nfeats, kernel_size=kernel_size, stride=stride,
                            padding=padding, bias=bias, activation=activation, init_func=init_func, use_norm=use_norm,
                            use_resnet=use_resnet, **kwargs)
@@ -111,10 +111,10 @@ class UpBlock(torch.nn.Module):
         self.upsample = upsample
         if self.upsample:
             self.up = nn.UpsamplingBilinear2d(scale_factor=2)
-            self.up_conv = Conv(intermediate_nfeats, out_channels, kernel_size=kernel_size, stride=stride,
-                                padding=padding,
-                                bias=bias, activation=None, init_func=init_func, use_norm=use_norm, use_resnet=False,
-                                **kwargs)
+            # self.up_conv = Conv(intermediate_nfeats, out_channels, kernel_size=kernel_size, stride=stride,
+            #                     padding=padding,
+            #                     bias=False, activation=None, init_func='zeros', use_norm=False, use_resnet=False,
+            #                     **kwargs)
 
     def forward(self, x):
         x = self.conv_0(x)
@@ -122,7 +122,7 @@ class UpBlock(torch.nn.Module):
             x = self.conv_1(x)
         if self.upsample:
             x = self.up(x)
-            x = self.up_conv(x)
+            # x = self.up_conv(x)
         return x
 
 

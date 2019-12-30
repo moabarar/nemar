@@ -17,10 +17,13 @@ import random
 import cv2
 import numpy as np
 import torch
-from torchvision.transforms import ToTensor, ToPILImage, RandomHorizontalFlip
+from torchvision.transforms import ToTensor, ToPILImage, RandomHorizontalFlip, Normalize
 
 from data.base_dataset import BaseDataset
 
+
+rgb_unit_normalize = Normalize(mean=[118.6808, 118.4811, 85.3022],
+                      std=[60.1607, 63.4259, 57.6958])
 
 def make_dataset(dir, max_dataset_size=float("inf")):
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
@@ -72,24 +75,30 @@ def crop_image(img, pos, size):
     return img[..., starty:starty + size_y, startx:startx + size_x]
 
 
-def transform_ir(img):
+def transform_ir(img, unit_normalize=False):
     ir = img.astype(np.float32)
-    if (np.max(ir) - np.min(ir)) <= 1e-8:
-        return None
-    ir = 2 * ((ir - np.min(ir)) / (np.max(ir) - np.min(ir))) - 1
+    if unit_normalize:
+        ir = (ir - 2260.7612)/161.9801
+    else:
+        if (np.max(ir) - np.min(ir)) <= 1e-8:
+           return None
+        ir = 2 * ((ir - np.min(ir)) / (np.max(ir) - np.min(ir))) - 1
     ir = ir.reshape((1, *ir.shape))
     ir = torch.from_numpy(ir)
     return ir
 
 
-def transform_rgb(img):
+def transform_rgb(img, unit_normalize=False):
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     rgb = rgb.astype(np.float32)
-    if (np.max(rgb) - np.min(rgb)) <= 1e-8:
-        return None
-    rgb = 2 * ((rgb - np.min(rgb)) / (np.max(rgb) - np.min(rgb))) - 1
+    if not unit_normalize:
+        if (np.max(rgb) - np.min(rgb)) <= 1e-8:
+            return None
+        rgb = 2 * ((rgb - np.min(rgb)) / (np.max(rgb) - np.min(rgb))) - 1
     rgb = np.rollaxis(rgb, -1, 0)
     rgb = torch.from_numpy(rgb)
+    if unit_normalize:
+        rgb = rgb_unit_normalize(rgb)
     return rgb
 
 

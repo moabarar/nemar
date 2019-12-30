@@ -11,29 +11,29 @@ REC_LAMBDA=0.0
 L1_LAMBDA=10.0
 L2_LAMBDA=0.0
 GAN_LAMBDA=1.0
-SMOOTH_LAMBDA=10.0
+SMOOTH_LAMBDA=50.0
 ALPHA_REG=0.0
 CYCLE_LAMBDA=0.0
 #-------> G CONFIG
 NGF=32
-N_BLOCKS=9
+N_BLOCKS=3
 NET_G="resnet_${N_BLOCKS}blocks"
 #-------> D CONFIG
 NDF=32
 NET_D="basic" #'n_layers' #""
 N_LAYERS_D=3
 #-------> Train CONFIG
-ITTER_DECAY=0
-ITTER=200
-DISPLAY_FREQ=1
-SAVE_EPOCH_FREQ=50
+ITTER_DECAY=100
+ITTER=100
+DISPLAY_FREQ=200
+SAVE_EPOCH_FREQ=5
 TBVIS_GRAD_UPDATE_RATE=100
 DATASET_DIR='/home/moaba/aligning_cyclegan/datasets'
 DATASET_NAME="EXP_523" #"agrinet_greenhouse" #"EXP_541" #"EXP_523" #"agrinet_extra_large_data"
 MODEL="mirnet"
 DIRECTION="AtoB"
 DATASET_MODE="agrinet"
-BATCH=1
+BATCH=10
 NORM="instance"
 NO_DROPOUT="--no_dropout"
 INIT_TYPE="kaiming"

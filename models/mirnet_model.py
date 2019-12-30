@@ -67,6 +67,9 @@ class MIRNETModel(BaseModel):
                                 help='whether to train stn the generator with l1')
             parser.add_argument('--stn_condition_on_discriminator', action='store_true',
                                 help='whether to condition the stn on the discriminator')
+            parser.add_argument('--smoothness_decay_policy', type=str, help=('Dynamically update the smoothness lambda term.'
+                                                                               ' Options are [\'constant\',\'linear\']'), 
+                                default='linear')
             TensorboardVisualizer.modify_commandline_options(parser, is_train)
         return parser
 
@@ -138,16 +141,21 @@ class MIRNETModel(BaseModel):
 
     def reset_weights(self):
         opt = self.opt
-        # if opt.direction in ['AtoB', 'Cycle']:
         networks.init_weights(self.netG_A, opt.init_type, opt.init_gain)
         networks.init_weights(self.netD_A, opt.init_type, opt.init_gain)
+
+    def update_smoothness_lambda(self, epoch):
+        if self.opt.smoothness_decay_policy == 'linear':
+           niter = self.opt.niter + self.opt.niter_decay 
+           alpha = max(1.0 - float(epoch-1)/float(niter), 0.25)
+           self.opt.lambda_stn_reg = alpha*self.opt.lambda_stn_reg
 
     def setup_optimizers(self):
         self.optimizer_STN_A, self.optimizer_G_A, self.optimizer_D_A = self.get_GAN_A_optimizer()
         self.optimizers.append(self.optimizer_G_A)
         self.optimizers.append(self.optimizer_D_A)
         self.optimizers.append(self.optimizer_STN_A)
-
+    
     def get_GAN_A_optimizer(self):
         opt = self.opt
         return (
@@ -213,7 +221,7 @@ class MIRNETModel(BaseModel):
         self.loss_smoothness = self.opt.lambda_stn_reg * smoothness_loss(self.deformation_field,
                                                                          img=self.transformed_real_A.detach(),
                                                                          alpha=self.opt.alpha_reg)
-        self.loss_affine_reg = 1.0 * l2_norm(self.affine_theta)
+        self.loss_affine_reg = 0.0 #0.01 * l2_norm(self.affine_theta)
 
         loss = self.loss_L1_B + self.loss_L1_P + self.loss_GAN_B + self.loss_GAN_P + \
                self.loss_smoothness + self.loss_affine_reg

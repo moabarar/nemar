@@ -9,7 +9,7 @@ from .unet_config import UNETConfig
 
 
 class STN(nn.Module):
-    def __init__(self, in_channels_a, in_channels_b, height, width, batch_size, cfg='A', apply_affine_first=True):
+    def __init__(self, in_channels_a, in_channels_b, height, width, batch_size, cfg='A', apply_affine_first=False):
         super(STN, self).__init__()
         self.cnt = 0
         self.batch_size = batch_size
@@ -18,7 +18,7 @@ class STN(nn.Module):
         self.in_channels_b = in_channels_b
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # PyTorch v0.4.0
         self.offset_map = UnetSTN(self.in_channels_a + self.in_channels_b, cfg=UNETConfig(cfg=cfg)).to(self.device)
-        self.affine_map = AffineNetwork().to(self.device)
+        self.affine_map = AffineNetwork().to(self.device) if apply_affine_first else None
         self.identity_grid = self.get_identity_grid()
         self.apply_affine_first = apply_affine_first
 

@@ -1,17 +1,17 @@
 down_nf = {'A': [64, 128, 128, 128, 128, 128, 128],
-           'B': [32, 64, 128],
+           'B': [32, 32, 32, 32, 32],
            'C': [64, 64, 128, 128, 128, 128, 128],
            'D': [32, 32, 64, 64, 64, 64, 64],
            'E': [32, 64, 64, 64, 64, 64, 64]}
 
 up_nf = {'A': [128, 128, 128, 128, 128, 128, 64],
-         'B': [128, 64, 32],
+         'B': [32, 32, 32, 32, 32],
          'C': [128, 128, 128, 128, 128, 64, 64],
          'D': [64, 64, 64, 64, 64, 32, 32],
          'E': [64, 64, 64, 64, 64, 64, 32]}
 
 output_refine_nf = {'A': [64, 64],
-                    'B': [32, 16],
+                    'B': [32, 32],
                     'C': [64, 64],
                     'D': [32, 32],
                     'E': [32, 32]}
@@ -45,9 +45,9 @@ class UNETConfig:
         self.down_nf = down_nf[cfg]
         self.down_activation = 'leaky_relu'
         self.up_nf = up_nf[cfg]
-        self.up_activation = 'leaky_relu'
+        self.up_activation = 'relu'
         self.output_refine_nf = output_refine_nf[cfg]
-        self.output_refine_activation = 'leaky_relu'
+        self.output_refine_activation = 'relu'
         self.refine = refine[cfg]
         self.refine_input = refine_input[cfg]
         self.init_type = init_type[cfg]

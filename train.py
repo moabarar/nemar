@@ -80,3 +80,5 @@ if __name__ == '__main__':
 
         print('End of epoch %d / %d \t Time Taken: %d sec' % (
             epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time))
+        model.update_smoothness_lambda(epoch)
+
