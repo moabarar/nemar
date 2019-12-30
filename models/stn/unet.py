@@ -53,8 +53,8 @@ class UnetSTN(nn.Module):
         for i, nf in enumerate(cfg.output_refine_nf):
             kernel_size = 1 if i == len(cfg.output_refine_nf) - 1 else 3
             padding = (kernel_size - 1) // 2
-            act = up_activation if i==0 else output_refine_activation
-            init = init_function # if i==0 else 'zeros'
+            act = up_activation if i == 0 else output_refine_activation
+            init = init_function
             setattr(self, 'output_refine_{}'.format(i + 1),
                     Conv(prev_input_nf, nf, kernel_size=kernel_size, stride=1, padding=padding, bias=use_bias,
                          activation=act, init_func=init, use_norm=use_norm,
@@ -66,6 +66,8 @@ class UnetSTN(nn.Module):
                            bias=False, activation=None, init_func='zeros', use_norm=False, pool=False)
         self.connection_map = connection_map
         self.skip_connect = skip_connect
+        # Used for Testing
+        self.layers_activations_map = {}
 
     def _pad(self, x, y):
         pad_h = y.size(2) - x.size(2)
@@ -89,29 +91,33 @@ class UnetSTN(nn.Module):
             if l_name in self.skip_connect:
                 skip_vals[l_name] = tmp[1]
                 x = tmp[0]
+                self.layers_activations_map[l_name] = tmp[1]
             else:
                 x = tmp
+                self.layers_activations_map[l_name] = tmp
             i += 1
         x = self.transform_block(x)
+        self.layers_activations_map['transform_block'] = x
         i = 1
         while hasattr(self, 'up_{}'.format(i)):
             l_name = 'up_{}'.format(i)
             if l_name in self.connection_map:
                 x = self._pad(x, skip_vals[self.connection_map[l_name]])
-                x = torch.cat([x, skip_vals[self.connection_map[l_name]]],
-                              1)  # x + skip_vals[self.connection_map[l_name]]
+                x = torch.cat([x, skip_vals[self.connection_map[l_name]]], 1)
             x = getattr(self, l_name)(x)
+            self.layers_activations_map[l_name] = x
             i += 1
         i = 1
         while hasattr(self, 'output_refine_{}'.format(i)):
             l_name = 'output_refine_{}'.format(i)
             if l_name in self.connection_map:
                 x = self._pad(x, skip_vals[self.connection_map[l_name]])
-                x = torch.cat([x, skip_vals[self.connection_map[l_name]]],
-                              1)  # x + skip_vals[self.connection_map[l_name]]
+                x = torch.cat([x, skip_vals[self.connection_map[l_name]]], 1)
             x = getattr(self, l_name)(x)
+            self.layers_activations_map[l_name] = x
             i += 1
         x = self.output(x)
+        self.layers_activations_map['output'] = x
         return x
 
     def init_to_identity(self):
