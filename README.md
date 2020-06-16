@@ -5,7 +5,9 @@ Unsupervised Multi-Modal Image Registration via Image-to-Image Registration.
 
 ## Getting started
 This repository is based on the implementation of [Pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix). We recommened getting yourself familiar with the former framework. Here we provide a basic guidline on how to use our code.
+
 ---
+
 ### (Step 1) Preparing your data
 You need to implement your own dataset. The dataset should implement the template proivded by in [base_dataset.py](data/base_dataset.py). Invoking '__getitem__' of your dataset should return the following template dictionay:<br>
 
@@ -14,7 +16,9 @@ You need to implement your own dataset. The dataset should implement the templat
  
 Where tensor_image_modality_[a/b] is the tensor of the image from modality A and modality B respectively.<br>
 The name convention use is <whatever-name-you-want>_dataset.py - this is important in order to be able to define your dataset using strings.
+
 ---
+ 
 ### (Step 2) Train NeMAR model
 Here we provide a list of flags that could be used during the training of our model. The flags are categorized into 
 STN related flags and general training flags<br>
@@ -27,11 +31,15 @@ STN related flags and general training flags<br>
 Training related flags (beside the base flags used by Pix2Pix/CycleGAN):
 * --multi_res: you can train NeMAR with multi-resoultion discriminators (similar to [pix2pixHD](https://arxiv.org/pdf/1711.11585.pdf)). 
 We believe this could be use-full when working with high-resolution images.
+
 ---
+
 ## Enabling Tensorboard
 We provide an option to write training stats using tensorboard. To enable tensorboard visualizer, you need to set the flag --enable_tbvis.
 This will create a tensboard log-file in the directory "<checkpoints_dir>/<exp_name>/<exp_name>_tensorboard_logs". 
+
 ---
+
 ### Citation
 If you use this repository - please cite:
 
