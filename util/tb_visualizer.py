@@ -16,7 +16,7 @@ class TensorboardVisualizer:
 
     def __init__(self, mirnet_model, networks_names, losses_names, opt):
         self.writer = None
-        self.writer_log_dir = '{}/{}/{}_tensorboard_logdir'.format(opt.checkpoints_dir, opt.name, opt.name)
+        self.writer_log_dir = '{}/{}/{}_tensorboard_logs'.format(opt.checkpoints_dir, opt.name, opt.name)
         self.enabled = False
         self.model = mirnet_model
         self.networks_names = networks_names
