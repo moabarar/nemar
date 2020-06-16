@@ -36,7 +36,15 @@ We believe this could be use-full when working with high-resolution images.
 
 ## Enabling Tensorboard
 We provide an option to write training stats using tensorboard. To enable tensorboard visualizer, you need to set the flag --enable_tbvis.
-This will create a tensboard log-file in the directory "<checkpoints_dir>/<exp_name>/<exp_name>_tensorboard_logs". 
+This will create a tensboard log-file in the directory "<checkpoints_dir>/<exp_name>/<exp_name>_tensorboard_logs". The tensorboard visualizer
+class reports (1) mean transformation offsets in x,y direction, (2) network weights, (3) losses. These values are written to tensorboard logfile each epoch. 
+The following flags can be used when tbvis is enabled<br>
+* --tbvis_iteration_update_rate if you want to write in iteration resolution set --tbvis_iteration_update_rate to positive number.
+* --tbvis_disable_report_offsets: set if you don't want to save the mean transformation offsets.
+* --tbvis_disable_report_weights: set if you don't want to save the network weights. 
+Use the followings flags for tensorboard visualizer:
+
+* --
 
 ---
 
