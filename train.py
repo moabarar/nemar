@@ -30,18 +30,15 @@ if __name__ == '__main__':
     dataset = create_dataset(opt)  # create a dataset given opt.dataset_mode and other options
     dataset_size = len(dataset)  # get the number of images in the dataset.
     print('The number of training images = %d' % dataset_size)
-
     model = create_model(opt)  # create a model given opt.model and other options
     model.setup(opt)  # regular setup: load and print networks; create schedulers
     visualizer = Visualizer(opt)  # create a visualizer that display/save images and plots
     total_iters = 0  # the total number of training iterations
-    # stn_schedulres, myfn = model.get_stn_schedulers()
     for epoch in range(opt.epoch_count,
                        opt.niter + opt.niter_decay + 1):  # outer loop for different epochs; we save the model by <epoch_count>, <epoch_count>+<save_latest_freq>
         epoch_start_time = time.time()  # timer for entire epoch
         iter_data_time = time.time()  # timer for data loading per iteration
         epoch_iter = 0  # the number of training iterations in current epoch, reset to 0 every epoch
-
         for i, data in enumerate(dataset):  # inner loop within one epoch
             iter_start_time = time.time()  # timer for computation per iteration
             if total_iters % opt.print_freq == 0:
@@ -49,12 +46,8 @@ if __name__ == '__main__':
             visualizer.reset()
             total_iters += opt.batch_size
             epoch_iter += opt.batch_size
-            if len(data) == 0:
-                continue
             model.set_input(data)  # unpack data from dataset and apply preprocessing
-            model.optimize_parameters(1)  # calculate loss functions, get gradients, update network weights
-            # if i == 0 and model.tb_visualizer is not None:
-            #     model.tb_visualizer.epoch_step()
+            model.optimize_parameters()  # calculate loss functions, get gradients, update network weights
             if total_iters % opt.display_freq == 0:  # display images on visdom and save images to a HTML file
                 save_result = total_iters % opt.update_html_freq == 0
                 model.compute_visuals()
@@ -80,5 +73,9 @@ if __name__ == '__main__':
 
         print('End of epoch %d / %d \t Time Taken: %d sec' % (
             epoch, opt.niter + opt.niter_decay, time.time() - epoch_start_time))
-        model.update_smoothness_lambda(epoch)
 
+        if model.tb_visualizer:  # Notify tensorboard visualizer on each end of epoch.
+            model.tb_visualizer.epoch_step()
+
+    if model.tb_visualizer:
+        model.tb_visualizer.end()

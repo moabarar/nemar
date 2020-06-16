@@ -1,2 +1,2 @@
 # MIR-Net
-Unsupervised Multi-Modal Image Registration via Image-to-Image Registration
+This is the official repository of : Unsupervised Multi-Modal Image Registration via Image-to-Image Registration

@@ -82,7 +82,8 @@ def transform_ir(img, unit_normalize=False):
     else:
         if (np.max(ir) - np.min(ir)) <= 1e-8:
            return None
-        ir = 2 * ((ir - np.min(ir)) / (np.max(ir) - np.min(ir))) - 1
+        ir = 2.0 * ((ir - np.min(ir)) / (np.max(ir) - np.min(ir))) - 1.0 
+        # ir = 2.0*(ir-735.)/(5720. - 735.) - 1.0
     ir = ir.reshape((1, *ir.shape))
     ir = torch.from_numpy(ir)
     return ir
@@ -94,13 +95,23 @@ def transform_rgb(img, unit_normalize=False):
     if not unit_normalize:
         if (np.max(rgb) - np.min(rgb)) <= 1e-8:
             return None
-        rgb = 2 * ((rgb - np.min(rgb)) / (np.max(rgb) - np.min(rgb))) - 1
+        rgb = 2.0*(rgb/255.0) - 1.0
+        # for ch in range(rgb.shape[-1]):
+        #     mx = rgb[...,ch].max()
+        #     mn = rgb[...,ch].min()
+        #     rgb[...,ch] -= mn
+        #     rgb[...,ch] *= 2.0/(mx-mn)
+        #     rgb[...,ch] -= 1.0
     rgb = np.rollaxis(rgb, -1, 0)
     rgb = torch.from_numpy(rgb)
     if unit_normalize:
         rgb = rgb_unit_normalize(rgb)
     return rgb
 
+def random_roi(ih, iw, oh, ow):
+    left_most = random.randint(0,iw-ow-1) if iw != ow else 0
+    upper_most = random.randint(0,ih-oh-1) if ih != oh else 0
+    return left_most, upper_most
 
 class AgriNetDataset(BaseDataset):
     """A template dataset class for you to implement custom datasets."""
@@ -139,7 +150,9 @@ class AgriNetDataset(BaseDataset):
         self.fid_list, self.fid_to_A_path, self.fid_to_B_path = make_dataset(self.dir_AB, opt.max_dataset_size)
         self.input_nc = self.opt.output_nc if self.opt.direction == 'BtoA' else self.opt.input_nc
         self.output_nc = self.opt.input_nc if self.opt.direction == 'BtoA' else self.opt.output_nc
-        self._crop = True
+        self._crop  = True
+        self._crop = (self.opt.img_height != 288 or self.opt.img_width != 384)
+        self.ih, self.iw = self.opt.img_height, self.opt.img_width
 
     def __getitem__(self, index):
         """Return a data point and its metadata information.
@@ -158,11 +171,20 @@ class AgriNetDataset(BaseDataset):
         A_path = self.fid_to_A_path[fid]
         B_path = self.fid_to_B_path[fid]
         A, B = cv2.imread(A_path, cv2.IMREAD_UNCHANGED), cv2.imread(B_path, cv2.IMREAD_UNCHANGED)
-        # if flip == 1:
-        #     A = cv2.flip(A, 1)
-        #     B = cv2.flip(B, 1)
+        if self._crop:
+            left, up = random_roi(288, 384, self.opt.img_height, self.opt.img_width)
+            A = A[up:up+self.ih, left:left+self.iw,...]
+            B = B[up:up+self.ih, left:left+self.iw]
+        # if self.resize:
+        #     A = cv2.resize(A,(self.opt.img_width, self.opt.img_height))
+        #     B = cv2.resize(B,(self.opt.img_width, self.opt.img_height))
+        flip = np.random.randint(0,2)
+        if flip != 0:
+            A = cv2.flip(A, 1)
+            B = cv2.flip(B, 1)
         A = transform_rgb(A)
-        B = transform_ir(B)
+        B = transform_ir(B) 
+           
         if A is None:
             print('Bad image {}'.format(A_path))
             return []

@@ -129,7 +129,12 @@ class BaseModel(ABC):
         visual_ret = OrderedDict()
         for name in self.visual_names:
             if isinstance(name, str):
-                visual_ret[name] = getattr(self, name)
+                visual_value = getattr(self, name)
+                if isinstance(visual_value, list):
+                    for i, x in enumerate(visual_value):
+                        visual_ret['{}_{}'.format(name,i)]=x
+                else:
+                    visual_ret[name] = visual_value
         return visual_ret
 
     def get_current_losses(self):

@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+checkpoints/*
+nohup.out
+checkpoints
+checkpoints_bk
+activation_dump_400
+models/stn/pretrained
+*.pth
+*.bk*
+/test.ipynb
+/scratch/
