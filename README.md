@@ -15,7 +15,7 @@ You need to implement your own dataset. The dataset should implement the templat
      'B': tensor_image_modality_b}
  
 Where tensor_image_modality_[a/b] is the tensor of the image from modality A and modality B respectively.<br>
-The name convention use is <whatever-name-you-want>_dataset.py - this is important in order to be able to define your dataset using strings.
+The name convention use is [whatever-name-you-want]_dataset.py - this is important in order to be able to define your dataset using strings.
 
 ---
  
@@ -42,9 +42,7 @@ The following flags can be used when tbvis is enabled<br>
 * --tbvis_iteration_update_rate if you want to write in iteration resolution set --tbvis_iteration_update_rate to positive number.
 * --tbvis_disable_report_offsets: set if you don't want to save the mean transformation offsets.
 * --tbvis_disable_report_weights: set if you don't want to save the network weights. 
-Use the followings flags for tensorboard visualizer:
 
-* --
 
 ---
 
