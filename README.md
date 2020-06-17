@@ -31,6 +31,9 @@ STN related flags and general training flags<br>
 Training related flags (beside the base flags used by Pix2Pix/CycleGAN):
 * --multi_res: you can train NeMAR with multi-resoultion discriminators (similar to [pix2pixHD](https://arxiv.org/pdf/1711.11585.pdf)). 
 We believe this could be use-full when working with high-resolution images.
+* --lambda_smooth: the lambda used for the regularization term of the stn.
+* --lambda_recon: the lambda used for the reconstruction loss.
+* --lambda_GAN: the lambda used for the GAN loss
 
 ---
 
