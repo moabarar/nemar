@@ -4,7 +4,8 @@ Unsupervised Multi-Modal Image Registration via Geometry Preserving Image-to-Ima
 ### [\[Paper\]](http://openaccess.thecvf.com/content_CVPR_2020/papers/Arar_Unsupervised_Multi-Modal_Image_Registration_via_Geometry_Preserving_Image-to-Image_Translation_CVPR_2020_paper.pdf)   [\[Supplemental Materials\]](http://openaccess.thecvf.com/content_CVPR_2020/supplemental/Arar_Unsupervised_Multi-Modal_Image_CVPR_2020_supplemental.pdf)
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/moabarar/nemar/nemar_deploy/teaser.gif">
+    <img src='https://raw.githubusercontent.com/moabarar/nemar/nemar_deploy/teaser.gif' alt='missing' />
+    <br>Registration output during 50 training epochs 
 </p>
 
 ## Getting started
