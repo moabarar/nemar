@@ -3,6 +3,10 @@ This is the official implementation of:<br>
 Unsupervised Multi-Modal Image Registration via Geometry Preserving Image-to-Image Translation.
 ### [\[Paper\]](http://openaccess.thecvf.com/content_CVPR_2020/papers/Arar_Unsupervised_Multi-Modal_Image_Registration_via_Geometry_Preserving_Image-to-Image_Translation_CVPR_2020_paper.pdf)   [\[Supplemental Materials\]](http://openaccess.thecvf.com/content_CVPR_2020/supplemental/Arar_Unsupervised_Multi-Modal_Image_CVPR_2020_supplemental.pdf)
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/moabarar/nemar/nemar_deploy/teaser.gif">
+</p>
+
 ## Getting started
 This repository is based on the implementation of [Pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix). We recommened getting yourself familiar with the former framework. Here we provide a basic guidline on how to use our code.
 
