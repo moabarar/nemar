@@ -1,6 +1,6 @@
 # NeMAR - Neural Multimodal Adversarial Registration
 This is the official implementation of:<br>
-Unsupervised Multi-Modal Image Registration via Image-to-Image Registration.
+Unsupervised Multi-Modal Image Registration via Geometry Preserving Image-to-Image Translation.
 ### [\[Paper\]](http://openaccess.thecvf.com/content_CVPR_2020/papers/Arar_Unsupervised_Multi-Modal_Image_Registration_via_Geometry_Preserving_Image-to-Image_Translation_CVPR_2020_paper.pdf)   [\[Supplemental Materials\]](http://openaccess.thecvf.com/content_CVPR_2020/supplemental/Arar_Unsupervised_Multi-Modal_Image_CVPR_2020_supplemental.pdf)
 
 ## Getting started
