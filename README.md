@@ -9,7 +9,7 @@ Unsupervised Multi-Modal Image Registration via Geometry Preserving Image-to-Ima
 </p>
 
 ## Getting started
-This repository is based on the implementation of [Pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix). We recommened getting yourself familiar with the former framework. Here we provide a basic guidline on how to use our code.
+This repository is based on the implementation of [Pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix). We recommened getting yourself familiar with the former framework. Here we provide a basic guidlines on how to use our code.
 
 ---
 
